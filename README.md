@@ -67,8 +67,8 @@ Y2K 젤리·유리 테마. 이미지 파일 없이 CSS 와 캔버스로만 그�
 | `src/store.ts` | 보관함 (IndexedDB, 최대 10개) |
 | `src/sound.ts` | Web Audio 로 합성한 효과음 (음원 파일 없음) |
 | `src/sfxWords.ts` | "빠작!" 같은 효과음 글씨 |
-| `intro.html`, `src/intro.ts`, `src/intro.css` | 한 장짜리 소개 페이지 (`/intro`). 앱과 같은 스타일·배경을 그대로 쓴다. 이미지는 `public/intro/` (강아지 사진은 Codex 로 생성, 왁뿌볼·희귀 장면은 앱으로 만든 실제 결과) |
 | `public/samples/` | AI 로 미리 만들어 둔 샘플 왁뿌볼 4종 (샘플은 AI 호출 없음) |
+| `promo/` | 한 장짜리 소개 이미지 `wakppu-intro.png`·`.jpg` (1080×1920). `promo/assets/` 는 그 재료: 강아지 사진(Codex 로 생성), 그 사진으로 만든 실제 왁뿌볼, 희귀 슬라임 게임 장면. 사이트에는 올라가지 않는다 |
 | `server/core.ts` | API 본체 (`/api/status`, `/api/waxify`, `/api/share`) — 웹 표준만 써서 로컬·Vercel·Cloudflare 공용 |
 | `server/node.ts`, `server/nodeHttp.ts` | 로컬 개발용 Vite 미들웨어 + 파일 저장소 / Node 요청 변환 도우미 |
 | `server/vercel.ts`, `server/redis.ts` | Vercel 배포판: 함수 진입점 + Upstash Redis 저장소(하루 수량·공유한 볼·분당 제한) |
@@ -81,7 +81,6 @@ Y2K 젤리·유리 테마. 이미지 파일 없이 CSS 와 캔버스로만 그�
 | 곳 | 주소 | 배포 방법 |
 |---|---|---|
 | **Vercel (대표)** | https://wakffuu.vercel.app | GitHub `main` 에 push 하면 자동 배포 |
-| 소개 페이지 | https://wakffuu.vercel.app/intro | 앱과 같이 배포 |
 | Cloudflare Workers | (지금은 없음) | 필요할 때 직접 `npx wrangler deploy` |
 
 ### Vercel

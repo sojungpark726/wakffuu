@@ -66,8 +66,6 @@ for (const line of fs.readFileSync(path.join(root, "public", "_headers"), "utf8"
     current.headers[line.slice(0, i).trim()] = line.slice(i + 1).trim();
   }
 }
-// 소개 페이지는 /intro 로도 열리게
-routes.push({ src: "^/intro/?$", dest: "/intro.html" });
 fs.writeFileSync(path.join(out, "config.json"), JSON.stringify({ version: 3, routes }, null, 2));
 
 const files = (dir) =>
