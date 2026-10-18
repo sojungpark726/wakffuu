@@ -18,8 +18,12 @@ export function findRedisConfig(env: Record<string, string | undefined>): RedisC
     ["UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN"],
     ["KV_REST_API_URL", "KV_REST_API_TOKEN"],
   ];
-  for (const name of Object.keys(env)) {
-    if (name.endsWith("_REST_API_URL")) pairs.push([name, name.replace(/_URL$/, "_TOKEN")]);
+  for (const [name, value] of Object.entries(env)) {
+    // 연결할 때 접두어를 바꿔도: 값이 Upstash REST 주소인 *_URL 이면 같은 이름의 *_TOKEN 과 짝짓는다
+    const looksUpstash = /^https:\/\/[^/]+\.upstash\.io\/?$/.test(value?.trim() ?? "");
+    if (name.endsWith("_REST_API_URL") || (looksUpstash && name.endsWith("URL"))) {
+      pairs.push([name, name.replace(/URL$/, "TOKEN")]);
+    }
   }
   for (const [u, t] of pairs) {
     const url = env[u]?.trim();

@@ -17,7 +17,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   const url = new URL(req.url ?? "/", `https://${host}`);
   try {
     if (!redis || !counters || !shares) {
-      console.error("[api] Upstash Redis 가 연결되지 않음 (Storage 탭에서 연결)");
+      // 값은 남기지 않고, 어떤 이름의 변수가 들어와 있는지만 로그에 (연결 문제 찾기용)
+      const names = Object.keys(process.env).filter((k) => /REDIS|KV|UPSTASH|STORAGE/i.test(k));
+      console.error(`[api] Upstash Redis 가 연결되지 않음 (Storage 탭에서 연결). 관련 변수 이름: ${names.join(", ") || "없음"}`);
       // 화면에는 "지금은 만들 수 없어요" 로만 보인다
       if (url.pathname === "/api/status") return sendJson(res, 200, { openai: false, limit: 0, remaining: 0 });
       return sendJson(res, 503, { error: "unavailable" });
