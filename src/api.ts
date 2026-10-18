@@ -53,7 +53,7 @@ export async function shareBall(shellPng: string, design: BallDesign): Promise<s
 
 /** 공유 링크로 받은 왁뿌볼 */
 export async function fetchSharedBall(id: string): Promise<{ shell: string; design: BallDesign }> {
-  const res = await fetch(`/api/share/${encodeURIComponent(id)}`);
+  const res = await fetch(`/api/share?id=${encodeURIComponent(id)}`);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new ApiError(data.error ?? `http_${res.status}`);
   return data;

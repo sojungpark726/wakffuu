@@ -67,11 +67,14 @@ const WAXIFY_PROMPT = (subject: string) =>
 // ---------- 진입점 ----------
 
 export async function handleApi(request: Request, p: Platform): Promise<Response> {
-  const route = new URL(request.url).pathname;
+  const url = new URL(request.url);
+  const route = url.pathname;
   try {
     if (request.method === "GET" && route === "/api/status") return await status(p);
+    // 공유한 볼 받기: /api/share?id=… (Vercel 은 함수 하나가 경로 하나) 또는 /api/share/…
+    if (request.method === "GET" && route === "/api/share") return await loadShared(url.searchParams.get("id") ?? "", p);
     if (request.method === "GET" && route.startsWith("/api/share/")) {
-      return await loadShared(route.slice("/api/share/".length), p);
+      return await loadShared(decodePath(route.slice("/api/share/".length)), p);
     }
     if (route !== "/api/waxify" && route !== "/api/share") throw new HttpError(404, "not_found");
     if (request.method !== "POST") throw new HttpError(405, "method");
@@ -186,14 +189,8 @@ async function saveShared(body: Json, p: Platform): Promise<Response> {
   return json(200, { id });
 }
 
-async function loadShared(rawId: string, p: Platform): Promise<Response> {
+async function loadShared(id: string, p: Platform): Promise<Response> {
   if (!(await p.allow("get", ipBucket(p.clientIp)))) throw new HttpError(429, "rate_limited");
-  let id: string;
-  try {
-    id = decodeURIComponent(rawId);
-  } catch {
-    throw new HttpError(400, "bad_id");
-  }
   if (!ID.test(id)) throw new HttpError(400, "bad_id");
   const value = await p.shares.get(id);
   if (!value) throw new HttpError(404, "not_found");
@@ -202,6 +199,14 @@ async function loadShared(rawId: string, p: Platform): Promise<Response> {
 }
 
 // ---------- 도우미 ----------
+
+function decodePath(raw: string): string {
+  try {
+    return decodeURIComponent(raw);
+  } catch {
+    throw new HttpError(400, "bad_id");
+  }
+}
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
