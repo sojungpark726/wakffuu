@@ -9,3 +9,5 @@ dist-trial
 !.env.example
 .dev.vars
 .dev.vars.*
+.vercel
+.claude/settings.local.json
