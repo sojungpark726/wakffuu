@@ -323,8 +323,30 @@ $("#paste-btn").onclick = async () => {
 };
 
 document.querySelectorAll<HTMLButtonElement>("[data-sample]").forEach((b) => {
-  b.onclick = () => onPhoto(sampleCanvas(b.dataset.sample!), b.dataset.sample!);
+  b.onclick = () => void playSample(b.dataset.sample!);
 });
+
+/**
+ * 샘플은 AI 로 미리 만들어 둔 왁뿌볼(public/samples)을 바로 꺼낸다 — AI 호출·한정 수량을 쓰지 않는다.
+ * 파일을 못 불러오면 예전처럼 샘플 사진으로 직접 만든다.
+ */
+async function playSample(key: string) {
+  const id = ++runId;
+  let shell: HTMLCanvasElement;
+  try {
+    shell = await shellFromUrl(`${import.meta.env.BASE_URL}samples/${key}.webp`);
+  } catch (e) {
+    console.warn("[wakppu] 미리 만든 샘플을 못 불러와서 직접 만듦", e);
+    if (id === runId) onPhoto(sampleCanvas(key), key);
+    return;
+  }
+  if (id !== runId) return;
+  const design = designBall(shell, SAMPLES[key]);
+  current = { shell, design, source: "ai", savedId: null, sharedId: null };
+  show("arena");
+  setTitle(design);
+  play.show(current, "샘플 왁뿌볼");
+}
 
 /** 테스트·체험용 샘플 사진: 이모지를 크게 그린 '사진' */
 function sampleCanvas(key: string): HTMLCanvasElement {

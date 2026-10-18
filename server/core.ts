@@ -60,11 +60,14 @@ class HttpError extends Error {
   }
 }
 
-// 왁스는 "색 없는 투명 광택"으로만 — 예전처럼 "파스텔 왁스로 덮어라"라고 하면 인물 사진이 한 가지 색 양초 인형처럼 나왔다
+// 왁스는 "색 없는 투명 광택"으로만 — "파스텔 왁스로 덮어라"라고 하면 인물 사진이 한 가지 색 양초 인형처럼 나왔다.
+// 색 지키기를 사람 기준으로만 적으면 과일·물건에 얼굴·옷을 지어내서, 대상 종류별로 나누고 "없는 것 덧붙이지 않기"를 둔다.
 const WAXIFY_PROMPT = (subject: string) =>
   `Turn the subject of this image${subject ? ` (${subject})` : ""} into a "wax crush toy": a palm-sized squishy shaped like the subject itself. Keep the subject's own silhouette and outline — do not turn it into a sphere — puffed up with soft rounded edges.
 
-Colors are the top priority: keep every original color from the photo in the same places. Skin tone, hair, eyes, lips, each piece of clothing and every accessory, fur, patterns and prints keep their own distinct colors, like a full-color hand-painted vinyl figure. Do not recolor, tint, desaturate or unify the colors — never make it a single-color or monochrome pastel statue.
+Stay faithful to what is actually in the photo: do not add anything that is not there. Never give a face, eyes, mouth, hair, clothes or a character body to an object, food, fruit or plant.
+
+Colors are the top priority: keep every original color from the photo in the same places, each part keeping its own distinct color, like a full-color hand-painted vinyl figure. For a person: their real skin tone, hair, eyes, lips, clothing and accessories. For an animal: its fur and markings. For an object, food or plant: its own colors, patterns and details. Do not recolor, tint, desaturate or unify the colors — never make it a single-color or monochrome pastel statue.
 
 The wax is a thin, clear, colorless glossy glaze over those colors: it only adds a smooth shine and a slight soft translucency at the edges, and never changes any hue.
 
