@@ -67,9 +67,9 @@ interface Snapshot {
 type State = "empty" | "intact" | "shattered";
 
 const S = SHELL_SIZE;
-/** 와장창까지 필요한 금 개수: 8~13번 (예전 12~18번의 70%) */
-const CRACKS_MIN = 8;
-const CRACKS_SPREAD = 6;
+/** 와장창까지 필요한 금 개수: 7~11번 (8~13번보다 1.2배 빨리) */
+const CRACKS_MIN = 7;
+const CRACKS_SPREAD = 5;
 
 export class WaxBall {
   state: State = "empty";
