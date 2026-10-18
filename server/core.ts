@@ -5,7 +5,7 @@ export interface ApiEnv {
   OPENAI_API_KEY?: string;
   /** 하루 한정 수량 (전체, 기본 100) */
   DAILY_LIMIT?: string;
-  /** 한 사람(IP)이 하루에 만들 수 있는 수 (기본 10) */
+  /** 한 사람(IP)이 하루에 만들 수 있는 수. 비워 두면 한 사람 제한 없음 (전체 한정만) */
   PER_IP_DAILY?: string;
   /** 테스트용 OpenAI 주소 바꾸기 (비워 두면 진짜 OpenAI) */
   OPENAI_BASE_URL?: string;
@@ -34,7 +34,6 @@ export interface Platform {
 }
 
 const DEFAULT_DAILY_LIMIT = 100;
-const DEFAULT_PER_IP_DAILY = 10;
 const SHARES_PER_IP_DAILY = 30;
 const SHARE_TTL_SECONDS = 30 * 24 * 60 * 60;
 
@@ -122,10 +121,9 @@ async function waxify(body: Json, p: Platform): Promise<Response> {
 
   const day = kstDay();
   const who = await ipHash(p.clientIp, day);
-  const usage: [string, number][] = [
-    ["waxify", dailyLimit(p.env)],
-    [`waxify:${who}`, perIpLimit(p.env)],
-  ];
+  const usage: [string, number][] = [["waxify", dailyLimit(p.env)]];
+  const perIp = perIpLimit(p.env);
+  if (perIp !== null) usage.push([`waxify:${who}`, perIp]);
   const blocked = await p.counters.take(day, usage);
   if (blocked) throw new HttpError(429, blocked === "waxify" ? "sold_out" : "my_limit");
   const refund = () => p.counters.refund(day, usage.map(([k]) => k));
@@ -314,8 +312,10 @@ function clean(s: string, max: number): string {
 function dailyLimit(env: ApiEnv): number {
   return intVar(env.DAILY_LIMIT, DEFAULT_DAILY_LIMIT);
 }
-function perIpLimit(env: ApiEnv): number {
-  return intVar(env.PER_IP_DAILY, DEFAULT_PER_IP_DAILY);
+/** 한 사람 제한: 숫자를 넣었을 때만 건다 */
+function perIpLimit(env: ApiEnv): number | null {
+  const n = intVar(env.PER_IP_DAILY, -1);
+  return n < 0 ? null : n;
 }
 function intVar(v: string | undefined, fallback: number): number {
   const n = v?.trim() ? Math.floor(Number(v)) : NaN;

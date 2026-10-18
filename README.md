@@ -17,7 +17,7 @@ npm run dev
 |---|---|
 | `OPENAI_API_KEY` | 왁뿌볼을 만들 때마다 gpt-image-1-mini 이미지 편집 1회 호출 |
 | `DAILY_LIMIT` | 하루 한정 왁뿌볼 수 (전체), 기본 100. 한국 시간 0시 초기화 |
-| `PER_IP_DAILY` | 한 사람(IP)이 하루에 만들 수 있는 수, 기본 10 |
+| `PER_IP_DAILY` | 한 사람(IP)이 하루에 만들 수 있는 수. 비워 두면 한 사람 제한 없음 (기본) |
 
 로컬에서는 수량을 `.data/usage.json`, 공유한 볼을 `.data/shared/` 에 기록한다.
 
@@ -89,7 +89,7 @@ GitHub 저장소 `sojungpark726/wakffuu` 가 Vercel 프로젝트 `wakffuu` 에 �
 |---|---|
 | 환경 변수 `OPENAI_API_KEY` | Secret, Production (프로젝트 Settings → Environment Variables) |
 | 저장소 | Upstash for Redis `wakffuu-redis` — 무료 플랜, 자동 유료 전환 끔, iad1. 연결하면 `KV_REST_API_URL`·`KV_REST_API_TOKEN` 이 자동으로 생긴다 |
-| `DAILY_LIMIT`, `PER_IP_DAILY` | 안 넣으면 100 / 10. 바꾸려면 환경 변수로 넣고 다시 배포 |
+| `DAILY_LIMIT`, `PER_IP_DAILY` | 안 넣으면 하루 전체 100개, 한 사람 제한 없음. 바꾸려면 환경 변수로 넣고 다시 배포 |
 
 환경 변수나 저장소를 바꾸면 **Deployments → 맨 위 배포 ⋯ → Redeploy** 를 해야 반영된다. Redis 가 연결되지 않으면 화면에는 "지금은 만들 수 없어요" 만 보이고, 원인(들어온 변수 이름)은 Vercel Logs 에 남는다.
 
@@ -114,7 +114,7 @@ GitHub push 로는 자동 배포되지 않으니, 고칠 때마다 `npx wrangler
 ### 보안·운영 메모
 
 - API 는 같은 사이트에서 온 요청(`Origin`)만 받는다. 다른 사이트가 방문자 브라우저를 빌려 수량을 쓰지 못한다.
-- 하루 전체 한정 + IP별 하루 한도 + 분당 요청 제한. 실패해서 요금이 안 나간 호출은 수량을 돌려준다 (시간 초과는 이미 만들어졌을 수 있어 돌려주지 않음).
+- 하루 전체 한정 + 분당 요청 제한 (+ `PER_IP_DAILY` 를 넣으면 한 사람 하루 한도). 실패해서 요금이 안 나간 호출은 수량을 돌려준다 (시간 초과는 이미 만들어졌을 수 있어 돌려주지 않음).
 - OpenAI 오류 내용은 사용자에게 보내지 않고 서버 로그(Vercel Logs)에만 남긴다.
 - IP 는 저장하지 않고, 날짜마다 바뀌는 해시로만 센다. 공유한 볼은 30일 뒤 지운다.
 - OpenAI 프로젝트에 월 예산 한도를 걸어 두는 것을 권장.
