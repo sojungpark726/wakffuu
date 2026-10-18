@@ -11,3 +11,5 @@ dist-trial
 .dev.vars.*
 .vercel
 .claude/settings.local.json
+.agents
+skills-lock.json
