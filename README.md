@@ -67,35 +67,54 @@ Y2K 젤리·유리 테마. 이미지 파일 없이 CSS 와 캔버스로만 그�
 | `src/store.ts` | 보관함 (IndexedDB, 최대 10개) |
 | `src/sound.ts` | Web Audio 로 합성한 효과음 (음원 파일 없음) |
 | `src/sfxWords.ts` | "빠작!" 같은 효과음 글씨 |
-| `server/core.ts` | API 본체 (`/api/status`, `/api/waxify`, `/api/share`) — 웹 표준만 써서 로컬·Cloudflare 공용 |
-| `server/node.ts` | 로컬 개발용: Vite 미들웨어 + 파일 저장소 |
-| `worker/index.ts` | Cloudflare 배포판: Worker + Durable Object(하루 수량·공유한 볼) |
-| `wrangler.jsonc` | Cloudflare 설정 (정적 파일, Durable Object, 분당 요청 제한, 수량 변수) |
-| `public/_headers` | 배포판 보안 헤더 (CSP 등)·캐시 |
+| `server/core.ts` | API 본체 (`/api/status`, `/api/waxify`, `/api/share`) — 웹 표준만 써서 로컬·Vercel·Cloudflare 공용 |
+| `server/node.ts`, `server/nodeHttp.ts` | 로컬 개발용 Vite 미들웨어 + 파일 저장소 / Node 요청 변환 도우미 |
+| `server/vercel.ts`, `server/redis.ts` | Vercel 배포판: 함수 진입점 + Upstash Redis 저장소(하루 수량·공유한 볼·분당 제한) |
+| `scripts/build-vercel.mjs`, `vercel.json` | Vercel 배포 묶음 만들기 (Build Output API: 화면·함수·보안 헤더) |
+| `worker/index.ts`, `wrangler.jsonc` | Cloudflare 배포판 (Worker + Durable Object) — 지금은 배포하지 않음 |
+| `public/_headers` | 배포판 보안 헤더 (CSP 등)·캐시. Vercel 은 빌드 때 같은 규칙을 옮겨 쓴다 |
 
-## 배포 (GitHub → Cloudflare Workers)
+## 배포
 
-GitHub 저장소를 Cloudflare 에 연결해 두면 `main` 에 올릴 때마다 자동으로 빌드·배포된다.
+| 곳 | 주소 | 배포 방법 |
+|---|---|---|
+| **Vercel (대표)** | https://wakffuu.vercel.app | GitHub `main` 에 push 하면 자동 배포 |
+| Cloudflare Workers | (지금은 없음) | 필요할 때 직접 `npx wrangler deploy` |
 
-1. Cloudflare 대시보드 → **Workers & Pages** → **Create** → **Import a repository** → 이 저장소 선택
-2. 빌드 설정: Build command `npm run build`, Deploy command `npx wrangler deploy` (기본값 그대로)
-3. 배포가 끝나면 Worker → **Settings → Variables and Secrets** → **Add** → 종류 *Secret*, 이름 `OPENAI_API_KEY`, 값에 키 → 저장(바로 적용)
-4. `https://wakppu.<계정>.workers.dev` 로 접속해서 확인. 수량 바꾸기는 `wrangler.jsonc` 의 `vars` 를 고쳐서 올리면 된다.
+### Vercel
 
-Durable Object(하루 수량·공유한 볼 저장)와 분당 요청 제한은 따로 만들 것 없이 첫 배포 때 같이 생긴다.
+GitHub 저장소 `sojungpark726/wakffuu` 가 Vercel 프로젝트 `wakffuu` 에 연결돼 있어서, `main` 에 올리면 Vercel 이 `npm run build && node scripts/build-vercel.mjs` 로 빌드해 자동으로 내보낸다.
+
+| Vercel 설정 | 값 |
+|---|---|
+| 환경 변수 `OPENAI_API_KEY` | Secret, Production (프로젝트 Settings → Environment Variables) |
+| 저장소 | Upstash for Redis `wakffuu-redis` — 무료 플랜, 자동 유료 전환 끔, iad1. 연결하면 `KV_REST_API_URL`·`KV_REST_API_TOKEN` 이 자동으로 생긴다 |
+| `DAILY_LIMIT`, `PER_IP_DAILY` | 안 넣으면 100 / 10. 바꾸려면 환경 변수로 넣고 다시 배포 |
+
+환경 변수나 저장소를 바꾸면 **Deployments → 맨 위 배포 ⋯ → Redeploy** 를 해야 반영된다. Redis 가 연결되지 않으면 화면에는 "지금은 만들 수 없어요" 만 보이고, 원인(들어온 변수 이름)은 Vercel Logs 에 남는다.
+
+배포 묶음을 로컬에서 만들어 보기:
+
+```bash
+npm run build
+node scripts/build-vercel.mjs   # .vercel/output 에 화면·함수·config.json
+```
+
+### Cloudflare Workers (선택)
+
+`wrangler.jsonc` 와 `worker/index.ts` 가 그대로 있어서 언제든 다시 올릴 수 있다. Durable Object(하루 수량·공유한 볼)와 분당 요청 제한은 첫 배포 때 같이 생긴다.
+
+```bash
+npx wrangler deploy                     # 빌드 후 wakffuu.<계정>.workers.dev 로 배포
+npx wrangler secret put OPENAI_API_KEY  # 키는 직접 입력
+```
+
+GitHub push 로는 자동 배포되지 않으니, 고칠 때마다 `npx wrangler deploy` 를 직접 해야 한다. `npm run cf:dev` 로 로컬에서 미리 볼 수 있는데, `wrangler dev` 는 `.env` 의 키를 그대로 읽어서 실제 OpenAI 호출이 나간다.
 
 ### 보안·운영 메모
 
 - API 는 같은 사이트에서 온 요청(`Origin`)만 받는다. 다른 사이트가 방문자 브라우저를 빌려 수량을 쓰지 못한다.
 - 하루 전체 한정 + IP별 하루 한도 + 분당 요청 제한. 실패해서 요금이 안 나간 호출은 수량을 돌려준다 (시간 초과는 이미 만들어졌을 수 있어 돌려주지 않음).
-- OpenAI 오류 내용은 사용자에게 보내지 않고 Worker 로그(대시보드 → Observability)에만 남긴다.
+- OpenAI 오류 내용은 사용자에게 보내지 않고 서버 로그(Vercel Logs)에만 남긴다.
 - IP 는 저장하지 않고, 날짜마다 바뀌는 해시로만 센다. 공유한 볼은 30일 뒤 지운다.
 - OpenAI 프로젝트에 월 예산 한도를 걸어 두는 것을 권장.
-
-### 배포판을 로컬에서 미리 보기
-
-```bash
-npm run cf:dev   # 빌드 후 wrangler dev (http://localhost:8787)
-```
-
-`wrangler dev` 는 `.env` 의 키를 그대로 읽으므로 실제 OpenAI 호출이 나간다.
