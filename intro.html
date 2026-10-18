@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#fbf3f4" />
+    <title>왁뿌 시뮬레이터 소개</title>
+    <meta name="description" content="사진을 왁뿌볼로 만들어 와작! 보관하고 공유하고, 운 좋으면 희귀 슬라임까지." />
+    <link rel="canonical" href="https://wakffuu.vercel.app/intro" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="왁뿌 시뮬레이터" />
+    <meta property="og:locale" content="ko_KR" />
+    <meta property="og:url" content="https://wakffuu.vercel.app/intro" />
+    <meta property="og:title" content="왁뿌 시뮬레이터 — 사진을 왁뿌볼로 만들어 와작!" />
+    <meta property="og:description" content="사진을 왁뿌볼로 만들어 와작! 보관하고 공유하고, 운 좋으면 희귀 슬라임까지." />
+    <meta property="og:image" content="https://wakffuu.vercel.app/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://wakffuu.vercel.app/og.jpg" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- 앱과 같은 배경: 톡 누르면 부서지는 젤리 + 코스틱 빛 -->
+    <canvas id="jelly-bg" aria-hidden="true"></canvas>
+    <canvas id="fx-bg" aria-hidden="true"></canvas>
+
+    <main class="app intro">
+      <header class="top hero">
+        <span class="sparkle s1" aria-hidden="true">✦</span>
+        <span class="sparkle s2" aria-hidden="true">✦</span>
+        <span class="sparkle s3" aria-hidden="true">✦</span>
+        <p class="wordmark">✦ WAX CRUSH SIMULATOR 2K ✦</p>
+        <h1 class="logo" data-text="왁뿌 시뮬레이터">왁뿌 시뮬레이터</h1>
+        <p class="tagline">사진을 왁뿌볼로 만들어 와작!</p>
+        <div class="hero-balls" aria-hidden="true">
+          <img src="/samples/strawberry.webp" alt="" />
+          <img src="/samples/apple.webp" alt="" />
+          <img src="/intro/puppy-ball.webp" alt="" />
+          <img src="/samples/donut.webp" alt="" />
+          <img src="/samples/cat.webp" alt="" />
+        </div>
+        <a class="btn pink cta" href="/">지금 만들어 보기</a>
+      </header>
+
+      <!-- 1. 사진 → 왁뿌볼 -->
+      <section class="card feat">
+        <div class="panel-head">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="feat-tag">01 · 만들기</span>
+        </div>
+        <div class="feat-body">
+          <div class="feat-text">
+            <h2>사진 한 장이<br /><em class="em-pink">왁뿌볼</em>로</h2>
+            <p>사진 속 대상을 톡! AI 가 말랑한 젤리 왁스로 굳혀줘요.</p>
+          </div>
+          <div class="feat-visual before-after">
+            <figure class="photo">
+              <img src="/intro/puppy.webp" alt="강아지 사진" width="760" height="760" />
+              <figcaption>내 사진</figcaption>
+            </figure>
+            <span class="arrow" aria-hidden="true">AI</span>
+            <figure class="ball">
+              <img src="/intro/puppy-ball.webp" alt="강아지 사진으로 만든 왁뿌볼" width="512" height="512" />
+              <figcaption>왁뿌볼</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. 보관·공유 -->
+      <section class="card feat flip">
+        <div class="panel-head">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="feat-tag">02 · 보관 · 공유</span>
+        </div>
+        <div class="feat-body">
+          <div class="feat-text">
+            <h2>모으고,<br /><em class="em-lilac">링크로 공유</em></h2>
+            <p>보관함에 10개까지. 링크를 받은 친구도 같이 깨요.</p>
+          </div>
+          <div class="feat-visual share" aria-hidden="true">
+            <div class="inv">
+              <div class="inv-title">내 왁뿌볼 <b>5</b> / 10</div>
+              <div class="inv-grid">
+                <img src="/intro/puppy-ball.webp" alt="" />
+                <img src="/samples/apple.webp" alt="" />
+                <img src="/samples/strawberry.webp" alt="" />
+                <img src="/samples/donut.webp" alt="" />
+                <img src="/samples/cat.webp" alt="" />
+                <i></i><i></i><i></i><i></i><i></i>
+              </div>
+            </div>
+            <div class="link-pill">🔗 wakffuu.vercel.app/?ball=…</div>
+            <div class="arrived">💌 친구가 보낸 왁뿌볼이 도착했어요!</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. 희귀 슬라임 -->
+      <section class="card feat">
+        <div class="panel-head">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="feat-tag">03 · 희귀</span>
+        </div>
+        <div class="feat-body">
+          <div class="feat-text">
+            <h2>깨보면 나오는<br /><em class="em-rainbow">희귀 슬라임</em></h2>
+            <p>굳힐 때마다 운을 시험해요.</p>
+          </div>
+          <div class="feat-visual rares">
+            <figure>
+              <img src="/intro/rare-rainbow.webp" alt="무지개 글리터 슬라임이 나온 장면" width="1280" height="1120" />
+              <figcaption><span class="odds rainbow">5%</span> 무지개 글리터</figcaption>
+            </figure>
+            <figure>
+              <img src="/intro/rare-diamond.webp" alt="다이아몬드 슬라임이 나온 장면" width="1280" height="1120" />
+              <figcaption><span class="odds diamond">1%</span> 다이아몬드</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <footer class="card outro">
+        <p class="outro-text">지금 내 사진으로 와작!</p>
+        <a class="btn pink cta" href="/">왁뿌볼 만들러 가기</a>
+      </footer>
+    </main>
+
+    <script type="module" src="/src/intro.ts"></script>
+  </body>
+</html>
