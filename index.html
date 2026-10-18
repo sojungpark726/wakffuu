@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#fbf3f4" />
+    <title>왁뿌 시뮬레이터</title>
+    <meta name="description" content="사진을 왁뿌볼로 만들어 와작!" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- 배경: 톡 누르면 부서지는 젤리 왁뿌볼들 + 코스틱 빛 -->
+    <canvas id="jelly-bg" aria-hidden="true"></canvas>
+    <canvas id="fx-bg" aria-hidden="true"></canvas>
+
+    <main class="app">
+      <header class="top">
+        <span class="sparkle s1" aria-hidden="true">✦</span>
+        <span class="sparkle s2" aria-hidden="true">✦</span>
+        <span class="sparkle s3" aria-hidden="true">✦</span>
+        <p class="wordmark">✦ WAX CRUSH SIMULATOR 2K ✦</p>
+        <h1 class="logo" data-text="왁뿌 시뮬레이터">왁뿌 시뮬레이터</h1>
+        <p class="tagline">사진을 왁뿌볼로 만들어 와작!</p>
+      </header>
+
+      <div class="layout">
+        <div class="flow">
+          <!-- 1. 사진 올리기 -->
+          <section id="step-upload" class="card upload">
+            <label class="drop" id="drop">
+              <input id="file" type="file" accept="image/*" hidden />
+              <span class="drop-icon" aria-hidden="true"></span>
+              <strong>사진을 올리면 왁뿌볼로 굳혀드려요</strong>
+              <span class="muted">눌러서 고르거나, 끌어다 놓거나, <b id="paste-key">Ctrl+V</b> 로 붙여넣기</span>
+            </label>
+            <div class="row paste-row">
+              <button type="button" class="btn ghost" id="paste-btn">📋 복사한 사진 붙여넣기</button>
+            </div>
+            <div class="samples">
+              <span class="muted">사진이 없다면</span>
+              <button type="button" class="chip" data-sample="apple">🍏 청사과</button>
+              <button type="button" class="chip" data-sample="strawberry">🍓 딸기</button>
+              <button type="button" class="chip" data-sample="donut">🍩 도넛</button>
+              <button type="button" class="chip" data-sample="cat">🐱 고양이</button>
+            </div>
+            <p class="quota" hidden></p>
+          </section>
+
+          <!-- 체험판: 준비된 왁뿌볼 고르기 -->
+          <section id="step-trial" class="card trial" hidden>
+            <h2 class="trial-title">체험 왁뿌볼을 골라 와작!</h2>
+            <p class="muted trial-note">사진으로 나만의 왁뿌볼을 만드는 건 정식 앱에서 할 수 있어요.</p>
+            <div class="trial-grid" id="trial-grid"></div>
+          </section>
+
+          <!-- 2. 대상 고르기 -->
+          <section id="step-pick" class="card pick" hidden>
+            <p class="pick-hint"><strong>왁뿌볼로 만들 대상을 톡 눌러주세요</strong></p>
+            <div class="pick-frame">
+              <canvas id="pick-canvas"></canvas>
+              <span class="ripple" id="ripple" hidden></span>
+            </div>
+            <div class="row">
+              <button type="button" class="btn ghost" id="pick-back">다른 사진</button>
+              <button type="button" class="btn pink" id="pick-center">가운데로 만들기</button>
+            </div>
+          </section>
+
+          <!-- 3. 가지고 놀기 -->
+          <section id="step-arena" hidden>
+            <button type="button" class="ball-title" id="ball-title" aria-label="이름과 아이콘 바꾸기">
+              <span class="ball-emoji" id="ball-emoji">🫧</span>
+              <span class="ball-text">
+                <span class="ball-name"><b id="ball-name">굳히는 중…</b><span class="edit-mark" aria-hidden="true">✎</span></span>
+                <span class="muted" id="ball-sub"></span>
+              </span>
+            </button>
+            <p class="lucky" id="lucky"></p>
+
+            <article class="panel" id="play">
+              <header class="panel-head">
+                <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <div class="panel-title">
+                  <h3>
+                    <span id="play-kind">왁뿌볼</span>
+                    <span class="rare-badge rainbow">🌈 희귀!</span><span class="rare-badge diamond">💎 초희귀!</span>
+                  </h3>
+                </div>
+              </header>
+              <div class="stage">
+                <canvas></canvas>
+                <div class="overlay">
+                  <div class="spinner"></div>
+                  <p class="status"></p>
+                  <button type="button" class="btn pink retry" hidden>다시 굳히기</button>
+                </div>
+                <p class="hint">톡 = 금 · 꾹 = 으깨기 · 끌기 = 던지기</p>
+              </div>
+              <div class="controls">
+                <button type="button" class="mint" data-act="reset">다시 굳히기</button>
+                <button type="button" class="lilac" data-act="filling">속: 슬라임</button>
+                <button type="button" class="blue" data-act="slowmo">슬로모</button>
+                <button type="button" class="orange" data-act="video">영상 저장</button>
+                <button type="button" class="lilac" data-act="save">보관하기</button>
+                <button type="button" class="pink" data-act="share">공유</button>
+              </div>
+            </article>
+
+            <div class="row center">
+              <button type="button" class="btn coral" id="again">새 사진으로 만들기</button>
+            </div>
+            <p class="quota" hidden></p>
+          </section>
+        </div>
+
+        <!-- 내 왁뿌볼 보관함 -->
+        <aside class="card inventory" id="inventory" aria-label="내 왁뿌볼 보관함">
+          <button type="button" class="inv-handle" id="inv-handle" aria-expanded="false" aria-controls="inventory">
+            <span>내 왁뿌볼</span><b id="inv-handle-count">0/10</b>
+          </button>
+          <header class="inv-head">
+            <h3>내 왁뿌볼 <span class="inv-count" id="inv-count">0/10</span></h3>
+            <button type="button" class="inv-select" id="inv-select" hidden>편집</button>
+          </header>
+          <div class="inv-actions" id="inv-actions" hidden>
+            <button type="button" class="btn ghost" id="inv-cancel">취소</button>
+            <button type="button" class="btn coral" id="inv-delete" disabled>삭제</button>
+          </div>
+          <ul class="inv-list" id="inv-list"></ul>
+          <p class="inv-empty muted" id="inv-empty">만든 왁뿌볼을 보관하면<br />여기 모여요</p>
+        </aside>
+      </div>
+    </main>
+
+    <!-- 선택창 (보관함이 꽉 찼을 때 / 공유받은 왁뿌볼) -->
+    <div class="modal" id="modal" hidden>
+      <div class="card modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <h3 id="modal-title"></h3>
+        <p class="muted" id="modal-text"></p>
+        <div class="modal-body" id="modal-body"></div>
+        <div class="row" id="modal-actions"></div>
+      </div>
+    </div>
+    <div class="toast" id="toast" role="status" hidden></div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

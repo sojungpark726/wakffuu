@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // 왁뿌 시뮬레이터 배포판: 정적 파일(dist) + /api/* 는 Worker(worker/index.ts)
+  "name": "wakppu",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    // /api/* 만 Worker 가 받고, 나머지 파일은 Worker 를 거치지 않고 바로 나간다
+    "run_worker_first": ["/api/*"]
+  },
+  // 하루 한정 수량과 공유한 왁뿌볼을 담는 저장소 (따로 만들 필요 없이 배포하면 생김)
+  "durable_objects": {
+    "bindings": [{ "name": "STORE", "class_name": "WakppuStore" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["WakppuStore"] }],
+  // IP별 분당 요청 제한
+  "ratelimits": [
+    { "name": "RL_POST", "namespace_id": "4801", "simple": { "limit": 20, "period": 60 } },
+    { "name": "RL_GET", "namespace_id": "4802", "simple": { "limit": 120, "period": 60 } }
+  ],
+  // OPENAI_API_KEY 는 여기 적지 말고 Cloudflare 대시보드의 비밀 변수(Secret)로 넣는다
+  "vars": {
+    "DAILY_LIMIT": "100",
+    "PER_IP_DAILY": "10"
+  },
+  "observability": { "enabled": true }
+}
