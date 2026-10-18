@@ -698,6 +698,15 @@ button {
   transform: scale(1.06, 0.88);
 }
 
+/* 사진 올리는 칸 아래 개인정보 안내 한 줄 */
+.privacy-note {
+  margin: 10px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--ink);
+  opacity: 0.62;
+}
 .quota {
   width: fit-content;
   margin: 14px auto 0;

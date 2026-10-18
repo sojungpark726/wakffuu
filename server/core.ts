@@ -61,8 +61,15 @@ class HttpError extends Error {
   }
 }
 
+// 왁스는 "색 없는 투명 광택"으로만 — 예전처럼 "파스텔 왁스로 덮어라"라고 하면 인물 사진이 한 가지 색 양초 인형처럼 나왔다
 const WAXIFY_PROMPT = (subject: string) =>
-  `Turn the subject of this image${subject ? ` (${subject})` : ""} into a "wax crush toy": a palm-sized squishy shaped like the subject itself. Keep the subject's own silhouette and outline — do not turn it into a sphere — puffed up with soft rounded edges and fully coated in a smooth, glossy, slightly translucent pastel wax shell, like a squishy dipped in candle wax. Keep it recognizable: its colors, face or features and patterns show through the wax. Single object, centered, front view, filling about 85% of the frame, soft studio lighting with one gentle highlight. Transparent background. No text, no hands, no props, no ground shadow.`;
+  `Turn the subject of this image${subject ? ` (${subject})` : ""} into a "wax crush toy": a palm-sized squishy shaped like the subject itself. Keep the subject's own silhouette and outline — do not turn it into a sphere — puffed up with soft rounded edges.
+
+Colors are the top priority: keep every original color from the photo in the same places. Skin tone, hair, eyes, lips, each piece of clothing and every accessory, fur, patterns and prints keep their own distinct colors, like a full-color hand-painted vinyl figure. Do not recolor, tint, desaturate or unify the colors — never make it a single-color or monochrome pastel statue.
+
+The wax is a thin, clear, colorless glossy glaze over those colors: it only adds a smooth shine and a slight soft translucency at the edges, and never changes any hue.
+
+Keep it recognizable: face, features and patterns stay clear. Single object, centered, front view, filling about 85% of the frame, soft studio lighting with one gentle highlight. Transparent background. No text, no hands, no props, no ground shadow.`;
 
 // ---------- 진입점 ----------
 
