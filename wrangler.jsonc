@@ -1,13 +1,18 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   // 왁뿌 시뮬레이터 배포판: 정적 파일(dist) + /api/* 는 Worker(worker/index.ts)
-  "name": "wakppu",
+  "name": "wakffuu",
   "main": "worker/index.ts",
   "compatibility_date": "2026-10-01",
+  // wakffuu.<계정>.workers.dev 주소로 연다
+  "workers_dev": true,
+  // wrangler deploy 가 먼저 화면을 빌드한다 (Windows 에서는 cmd 로 돌아서 sh 명령은 쓰지 않음)
+  "build": { "command": "npm run build" },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "not_found_handling": "single-page-application",
+    // 페이지가 하나(/, 공유 링크도 /?ball=)라서 없는 주소는 그냥 404
+    "not_found_handling": "none",
     // /api/* 만 Worker 가 받고, 나머지 파일은 Worker 를 거치지 않고 바로 나간다
     "run_worker_first": ["/api/*"]
   },
